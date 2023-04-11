@@ -1,15 +1,33 @@
-// server/index.js
+import express from 'express';
+import dotenv from 'dotenv';
+import morgan from 'morgan';
+import connectDB from './config/db.js';
+import cors from 'cors';
 
-const express = require("express");
+import aboutRouter from './routes/aboutRoute.js'
 
-const PORT = process.env.PORT || 3001;
 
-const app = express();
+dotenv.config();
+await connectDB();
 
-app.get("/api", (req, res) => {
-  res.json({ message: "Hello from server!" });
-});
+const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
-});
+const app = new express();
+app.use(express.json());
+app.use(cors())
+
+if (process.env.NODE_ENV === "development") {
+    app.use(morgan('dev'));
+}
+
+
+app.use(express.json());
+
+app.get('/', (req, res) => {
+    res.send('API is running...')
+})
+app.use('/api/about', aboutRouter);
+
+
+
+app.listen(PORT, console.log(`Server is running in ${process.env.NODE_ENV} on port ${PORT}!!!`))
