@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import colors from "colors";
+
 const connectDB = async () => {
   try {
     console.log(process.env.MONGO_URI);
@@ -10,4 +12,4 @@ const connectDB = async () => {
   }
 };
 
-module.exports = connectDB;
+export default connectDB;

@@ -1,15 +1,21 @@
 // server/index.js
+import express from "express";
+import dotenv from "dotenv";
+import errorHandler from "./middlewares/errorMiddleware.js";
+const port = process.env.PORT || 8000;
+import serviceRoutes from "./routes/serviceRoutes.js";
+import connectDB from "./config/db.js";
 
-const express = require("express");
-
-const PORT = process.env.PORT || 3001;
-
+dotenv.config();
+connectDB();
 const app = express();
 
-app.get("/api", (req, res) => {
-  res.json({ message: "Hello from server!" });
-});
+//you use these inorder to use the body data
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
-});
+app.use("/api/services", serviceRoutes);
+
+app.use(errorHandler);
+
+app.listen(port, () => console.log(`Server started on port ${port}`));
