@@ -11,16 +11,11 @@ const serviceSchema = new Schema({
     type: String,
     required: true,
   },
-  image: {
-    url: {
-      type: String,
-      required: true,
-    },
-    alt: {
-      type: String,
-      required: true,
-    },
+  image_url: {
+    type: String,
+    required: true,
   },
+
   status: {
     type: String,
     enum: ["customer", "student"],
