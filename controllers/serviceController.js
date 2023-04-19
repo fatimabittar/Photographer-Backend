@@ -1,9 +1,21 @@
 import Service from "../models/serviceModel.js";
+import fs from "fs";
+import path from "path";
 
 // GET /services - retrieve all services
 const getServices = async (req, res) => {
   try {
-    const services = await Service.find();
+    const services = (await Service.find()).map((item) => {
+      const file = fs.readFileSync(item.image_url);
+      const image = Buffer.from(file).toString("base64");
+      return {
+        title: item.title,
+        price: item.price,
+        description: item.description,
+        status: item.status,
+        image,
+      };
+    });
     res.json(services);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -27,8 +39,9 @@ const getServiceById = async (req, res) => {
 const createService = async (req, res) => {
   const service = new Service({
     title: req.body.title,
+    price: req.body.price,
     description: req.body.description,
-    image: req.body.image,
+    image_url: req.file.path,
     status: req.body.status,
   });
 
@@ -49,8 +62,9 @@ const updateService = async (req, res) => {
     }
 
     service.title = req.body.title;
+    service.price = req.body.price;
     service.description = req.body.description;
-    service.image = req.body.image;
+    service.image_url = req.file.path;
     service.status = req.body.status;
 
     const updatedService = await service.save();
@@ -63,13 +77,8 @@ const updateService = async (req, res) => {
 // DELETE /services/:id - delete a specific service by ID
 const deleteService = async (req, res) => {
   try {
-    const service = await Service.findById(req.params.id);
-    if (!service) {
-      return res.status(404).json({ message: "Service not found" });
-    }
-
-    await service.remove();
-    res.json({ message: "Service deleted successfully" });
+    const service = await Service.findByIdAndDelete(req.params.id);
+    res.json({ message: `Service ${service.title} deleted successfully` });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
