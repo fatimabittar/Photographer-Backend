@@ -48,6 +48,10 @@ const orderSchema = new Schema(
             type: Number,
             required: true
         },
+        size: {
+            type: String,
+            required: true
+        },
         ItemId: {
             type: Schema.Types.ObjectId,
             ref: 'Item',

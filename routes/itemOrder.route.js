@@ -4,9 +4,9 @@ import protect from '../middlewares/authMiddleware.js'
 const router = express.Router();
 
 router.post('/', controller.createItemOrder);
-router.get('/', protect, controller.getItemOrders);
-router.get('/:id', protect, controller.getItemOrderById);
-router.put('/:id', protect, controller.updateItemOrder);
-router.delete('/:id', protect, controller.deletedItemOrder);
+router.get('/', controller.getItemOrders);
+router.get('/:id', controller.getItemOrderById);
+router.put('/:id',  controller.updateItemOrder);
+router.delete('/:id', controller.deletedItemOrder);
 
 export default router;

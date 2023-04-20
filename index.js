@@ -7,12 +7,20 @@ import ItemRouter from './routes/item.route.js'
 import OrderRouter from './routes/order.route.js'
 import ItemOrderRouter from './routes/itemOrder.route.js'
 import UserRouter from './routes/user.route.js'
+import cors from 'cors';
 
 dotenv.config();
 await connectDB();
 
 const PORT = process.env.PORT || 5000;
 const app = express();
+
+const corsOptions = {
+  origin: '*'
+};
+
+app.use(cors(corsOptions));
+
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({

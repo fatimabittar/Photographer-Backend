@@ -5,10 +5,10 @@ import Item from '../models/item.model.js'
 class Controller {
     async createOrder(req, res) {
         try {
-            const { firstName, lastName, email, phone, country, city, state, street, building, Q, ItemId } = req.body;
+            const { firstName, lastName, email, phone, country, city, state, street, building, Q, size,  ItemId } = req.body;
 
             // Validate required fields
-            if (!firstName || !lastName || !email || !phone || !country || !city || !state || !street || !building || !Q || !ItemId) {
+            if (!firstName || !lastName || !email || !phone || !country || !city || !state || !street || !building || !Q || !size || !ItemId) {
                 return res.status(400).json({ message: 'Please fill in all required fields.' });
             }
 
@@ -40,6 +40,7 @@ class Controller {
                 street,
                 building,
                 Q,
+                size,
                 total,
                 ItemId
             });
@@ -76,10 +77,10 @@ class Controller {
 
     async updateOrder(req, res) {
         const { id } = req.params;
-        const { firstName, lastName, email, phone, country, city, state, street, building, total, ItemId } = req.body;
+        const { firstName, lastName, email, phone, country, city, state, street, building, Q, size, total, ItemId } = req.body;
 
         try {
-            const updatedOrder = await Order.findByIdAndUpdate(id, { firstName, lastName, email, phone, country, city, state, street, building, total, ItemId }, { new: true }).populate('ItemId');
+            const updatedOrder = await Order.findByIdAndUpdate(id, { firstName, lastName, email, phone, country, city, state, street, building, Q , size, total, ItemId }, { new: true }).populate('ItemId');
             res.status(200).json({ message: `Updated successfully`, updatedOrder });
         } catch (error) {
             res.status(404).json({ message: error.message });
