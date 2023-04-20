@@ -8,9 +8,13 @@ const imageSchema = new Schema(
       type: String,
       required: true,
     },
-    section: {
+    page: {
       type: String,
       enum: ["home", "gallery", "services", "shop", "about"],
+      required: true,
+    },
+    section: {
+      type: Number,
       required: true,
     },
   },

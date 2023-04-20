@@ -11,6 +11,7 @@ const getImages = async (req, res) => {
       return {
         image,
         section: item.section,
+        page: item.page,
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
       };
@@ -24,17 +25,19 @@ const getImages = async (req, res) => {
 // Create image
 const createImage = async (req, res) => {
   try {
-    const { section } = req.body;
-    const imageFile = req.files.image;
+    const section = req.body.section;
+    const page = req.body.page;
+    const imageFile = req.file.path;
 
     // Save image to server
-    const filename = `${Date.now()}-${imageFile.name}`;
-    const filepath = `uploads/${filename}`;
-    await imageFile.mv(filepath);
+    // const filename = `${Date.now()}-${req.file.originalname}`;
+    // const filepath = `uploads/${filename}`;
+    // await fs.promises.rename(imageFile, filepath);
 
     // Save image URL to database
     const newImage = new image({
-      image_url: filepath,
+      image_url: imageFile,
+      page,
       section,
     });
     const savedImage = await newImage.save();
@@ -54,6 +57,7 @@ const updateImage = async (req, res) => {
 
     img.image_url = req.body.image_url;
     img.section = req.body.section;
+    img.page = req.body.page;
 
     const updatedImage = await img.save();
 

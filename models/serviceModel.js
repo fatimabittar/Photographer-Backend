@@ -11,7 +11,6 @@ const serviceSchema = new Schema(
 
     price: {
       type: String,
-      required: true,
     },
     description: {
       type: String,
@@ -19,7 +18,6 @@ const serviceSchema = new Schema(
     },
     image_url: {
       type: String,
-      required: true,
     },
 
     status: {
