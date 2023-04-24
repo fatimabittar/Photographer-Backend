@@ -12,6 +12,8 @@ const getImages = async (req, res) => {
         image,
         section: item.section,
         page: item.page,
+        width: item.width,
+        height: item.height,
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
       };
@@ -25,18 +27,15 @@ const getImages = async (req, res) => {
 // Create image
 const createImage = async (req, res) => {
   try {
-    const section = req.body.section;
-    const page = req.body.page;
     const imageFile = req.file.path;
 
-    // Save image to server
-    // const filename = `${Date.now()}-${req.file.originalname}`;
-    // const filepath = `uploads/${filename}`;
-    // await fs.promises.rename(imageFile, filepath);
+    const { section, page, width, height } = req.body;
 
     // Save image URL to database
     const newImage = new image({
       image_url: imageFile,
+      width,
+      height,
       page,
       section,
     });
@@ -58,6 +57,8 @@ const updateImage = async (req, res) => {
     img.image_url = req.body.image_url;
     img.section = req.body.section;
     img.page = req.body.page;
+    img.height = req.body.height;
+    img.width = req.body.width;
 
     const updatedImage = await img.save();
 

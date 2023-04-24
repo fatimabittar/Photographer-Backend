@@ -17,6 +17,12 @@ const imageSchema = new Schema(
       type: Number,
       required: true,
     },
+    width: {
+      type: Number,
+    },
+    height: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );
