@@ -9,11 +9,12 @@ const getImages = async (req, res) => {
       const file = fs.readFileSync(item.image_url);
       const image = Buffer.from(file).toString("base64");
       return {
-        image,
+        image: item.image_url,
         section: item.section,
         page: item.page,
         width: item.width,
         height: item.height,
+        priority: item.priority,
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
       };
@@ -29,7 +30,7 @@ const createImage = async (req, res) => {
   try {
     const imageFile = req.file.path;
 
-    const { section, page, width, height } = req.body;
+    const { section, page, width, height, priority } = req.body;
 
     // Save image URL to database
     const newImage = new image({
@@ -38,6 +39,7 @@ const createImage = async (req, res) => {
       height,
       page,
       section,
+      priority,
     });
     const savedImage = await newImage.save();
 
@@ -51,14 +53,20 @@ const createImage = async (req, res) => {
 const updateImage = async (req, res) => {
   try {
     const img = await image.findById(req.params.id);
-    const file = fs.readFileSync(req.body.image_url);
-    const image = Buffer.from(file).toString("base64");
 
-    img.image_url = req.body.image_url;
-    img.section = req.body.section;
-    img.page = req.body.page;
-    img.height = req.body.height;
-    img.width = req.body.width;
+    const imageFile = req.file?.path;
+
+    const { section, page, width, height, priority } = req.body;
+
+    // const file = fs.readFileSync(req.body.image_url);
+    // const image = Buffer.from(file).toString("base64");
+
+    if (imageFile) img.image_url = imageFile;
+    if (section) img.section = section;
+    if (page) img.page = page;
+    if (width) img.height = width;
+    if (height) img.width = height;
+    if (priority) img.priority = priority;
 
     const updatedImage = await img.save();
 

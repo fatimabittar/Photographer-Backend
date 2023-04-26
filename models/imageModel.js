@@ -23,6 +23,10 @@ const imageSchema = new Schema(
     height: {
       type: Number,
     },
+    priority: {
+      type: Number,
+      default: 1,
+    },
   },
   { timestamps: true }
 );
