@@ -4,12 +4,23 @@ import fs from "fs";
 // Get all images
 const getImages = async (req, res) => {
   try {
-    const images = await image.find();
+    const section = req.query.section;
+    const page = req.query.page;
+
+    let filter = {};
+    if (section) {
+      filter.section = section;
+    }
+    if (page) {
+      filter.page = page;
+    }
+
+    const images = await image.find(filter);
     const result = images.map((item) => {
       const file = fs.readFileSync(item.image_url);
       const image = Buffer.from(file).toString("base64");
       return {
-        image: item.image_url,
+        image,
         section: item.section,
         page: item.page,
         width: item.width,
@@ -24,6 +35,7 @@ const getImages = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // Create image
 const createImage = async (req, res) => {
