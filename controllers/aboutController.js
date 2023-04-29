@@ -54,27 +54,21 @@ class Controller {
   }
   //update an author by _id
   async put(req, res, next) {
-    let { id } = req.params;
-    let body = req.body;
     try {
-      const existingDoc = await Model.findById(id);
-      if (!existingDoc) {
-        return res
-          .status(404)
-          .json({ message: `Info with id ${id} does not exist` });
+      const about = await Model.findById(req.params.id);
+      if (!about) {
+        return res.status(404).json({ message: "About not found" });
       }
-      if (req.file) {
-        fs.unlinkSync(existingDoc.image_url); // remove old image file
-        body.image_url = req.file.path; // set new image path
-      }
-      const updatedDoc = await Model.findByIdAndUpdate(id, body, { new: true });
-      return res
-        .status(200)
-        .json({ data: updatedDoc, message: `Updated successfuly` });
-    } catch (err) {
-      return res.status(500).json({
-        data: err.message,
-      });
+
+      about.title = req.body.title;
+      about.description = req.body.description;
+      about.image_url = req.file.path;
+      about.section = req.body.section;
+
+      const updatedAbout = await about.save();
+      res.json(updatedAbout);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
     }
   }
   //delete story by id

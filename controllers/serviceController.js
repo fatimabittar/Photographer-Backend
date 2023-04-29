@@ -13,6 +13,7 @@ const getServices = async (req, res) => {
         price: item.price,
         description: item.description,
         status: item.status,
+        id: item.id,
         image,
       };
     });
