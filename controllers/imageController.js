@@ -40,7 +40,7 @@ const getImages = async (req, res) => {
 // Create image
 const createImage = async (req, res) => {
   try {
-    const imageFile = req.file.path;
+    const imageFile = req.file?.path;
 
     const { section, page, width, height, priority } = req.body;
 
