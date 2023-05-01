@@ -1,12 +1,59 @@
 import Item from "../models/item.model.js";
 import ItemOrder from '../models/itemOrder.model.js'
 
+import fs from "fs";
+import path from "path";
 
 class Controller {
+    // async createItem(req, res) {
+    //     try {
+    //         const item = await Item.create({
+    //             title: req.body.title,
+    //             description: req.body.description,
+    //             price: req.body.price,
+    //             size: req.body.size,
+    //             stock: req.body.stock,
+    //             category: req.body.category,
+    //             image: req.file.path, // save the image path to your item model
+    //         });
+
+    //         // Retrieve the quantity of the item from ItemOrder
+    //         const itemOrder = await ItemOrder.findOne({ ItemId: item._id });
+
+    //         // Check if there is a quantity available
+    //         let quantity = 0;
+    //         if (itemOrder) {
+    //             quantity = itemOrder.quantity;
+    //         }
+
+    //         // Retrieve the stock of the item
+    //         const originalItem = await Item.findById(item._id);
+
+    //         // Update the stock of the item
+    //         if (originalItem) {
+    //             originalItem.stock += quantity;
+    //             await originalItem.save();
+    //         }
+
+    //         return res.status(200).json({ message: "Item created successfully.", originalItem });
+    //     } catch (error) {
+    //         console.error(error);
+    //         res.status(500).json({ message: "Error creating item" });
+    //     }
+    // }
 
     async createItem(req, res) {
         try {
-            const item = await Item.create(req.body);
+            const item = await Item.create({
+                title: req.body.title,
+                description: req.body.description,
+                size: req.body.size,
+                price: req.body.price,
+                stock: req.body.stock,
+                category: req.body.category,
+                image_url: req.file.path,
+
+            })
 
             // Retrieve the quantity of the item from ItemOrder
             const itemOrder = await ItemOrder.findOne({ ItemId: item._id });

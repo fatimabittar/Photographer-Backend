@@ -21,9 +21,9 @@ const itemSchema = new Schema(
         category: {
             type: String,
         },
-        // image: {
-        //     type: String,
-        // },
+        image_url: {
+            type: String,
+        }
     },
 
     {

@@ -1,10 +1,21 @@
 import express from 'express';
-import controller from '../controllers/user.controller.js';
-import protect from '../middlewares/authMiddleware.js'
+import {
+    registerUser,
+    loginUser,
+    getMe,
+    getAll,
+    deleteUser,
+    logoutUser
+} from '../controllers/user.controller.js';
+import { protect } from '../middlewares/authMiddleware.js';
+
 const router = express.Router();
 
-router.post('/register', controller.registerUser);
-router.post('/login', controller.loginUser);
-router.get('/me', protect, controller.getMe);
+router.post('/register', registerUser);
+router.route('/login').post(loginUser);
+router.route('/logout').post(logoutUser);
+router.route('/delete/:id',).delete(deleteUser);
+router.get('/getall', getAll);
+router.get('/me/:id', getMe);
 
 export default router;

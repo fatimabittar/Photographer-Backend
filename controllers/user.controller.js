@@ -1,106 +1,133 @@
-import User from "../models/user.model.js"
-import Jwt from "jsonwebtoken"
-import bcrypt from 'bcrypt';
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import User from "../models/user.model.js";
 
 
-//Generate Token (JWT)
+// Register
+const registerUser = async (req, res) => {
+    const { username, email, password } = req.body;
 
+
+    if (!username || !email || !password) {
+        res.status(400).send({ message: "Please add all fields" });
+    }
+
+    // Email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+        res.status(400).send({ message: "Please enter a valid email address" });
+    }
+
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+        res.status(400).send({ message: "User already exists" });
+    }
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    //create user
+    const user = await User.create({
+        username,
+        email,
+        password: hashedPassword,
+    });
+
+    if (!user) {
+        res.status(400).send({ message: "Invalid user data" });
+    }
+    res.status(201).json({
+        _id: user.id,
+        username: user.username,
+        email: user.email,
+    });
+
+};
+
+// Login
+const loginUser = async (req, res) => {
+    const { email, password } = req.body;
+    //check for admin email
+    User.findOne({ email }).then(user => {
+        if (!user) {
+            return res.status(404).json({
+                errors: [{ user: "not found" }],
+            });
+        } else {
+            bcrypt.compare(password, user.password).then(isMatch => {
+                if (!isMatch) {
+                    return res.status(400).json({
+                        errors: [{
+                            password:
+                                "incorrect"
+                        }]
+                    });
+                } else {
+                    res.json({
+                        token: generateToken(user._id),
+                        role: user.role,
+                    })
+                }
+            })
+        }
+    })
+};
+
+// Generate JWT
 const generateToken = (id) => {
-    return Jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: '30d',
+    return jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: process.env.ACCESS_TOKEN_SECRET_EXPIRE,
     });
 };
 
-class Controller {
+// LogOut
+const logoutUser = async (req, res) => {
+    res.cookie("token", "", {
+        httpOnly: true,
+        expires: new Date(0),
+    });
+    res.status(200).json({ message: "Logged out" });
+};
 
-    //Register
+// Delete User
+const deleteUser = async (req, res) => {
+    try {
+        const deletedUser = await User.findByIdAndRemove(req.params.id);
 
-    async registerUser(req, res) {
-        const { username, email, password } = req.body
+        if (!deletedUser)
+            return res.status(404).json({ message: "User not found" });
 
-        if (!username || !email || !password) {
-            res.status(400).json({ message: `please add all fields` })
-        }
-
-        //check if user exists
-        const userExists = await User.findOne({ email })
-
-        if (userExists) {
-            res.status(400).json({ message: `User already Exist` })
-        }
-
-        //Hash password
-        const salt = await bcrypt.genSalt(10)
-        const hashedPassword = await bcrypt.hash(password, salt)
-
-        //Create User
-        const user = await User.create({
-            username,
-            email,
-            password: hashedPassword
-        })
-
-        //check if user created
-        if (user) {
-            res.status(201).json({
-                message: `User Created Successfully`,
-                _id: user.id,
-                username: user.username,
-                email: user.email,
-                token: generateToken(user._id)
-            })
-
-        }
-        else {
-            res.status(400).json({ message: `Invalid User Data` })
-        }
-
+        res.status(200).json({ message: "User deleted successfully" });
+    } catch (err) {
+        next(err);
     }
 
+};
 
-    //login
-
-    async loginUser(req, res) {
-        const { email, password } = req.body
-
-        //check for user email
-        const user = await User.findOne({ email })
-
-        //check password
-        if (user && (await bcrypt.compare(password, user.password))) {
-            res.json({
-                message: `Loged In Successfully`,
-                _id: user.id,
-                username: user.username,
-                email: user.email,
-                token: generateToken(user._id)
-            })
-        }
-
-        else {
-            res.status(400).json({ message: `Invalid Credentials` })
-        }
-
+// get by ID
+const getMe = async (req, res) => {
+    const user = await User.findById(req.params.id);
+    if (user) {
+        res.json(user);
+    } else {
+        res.status(404).send({ message: "User not found" });
     }
+};
 
-    //Get users
-    //since iam getting req.user from middleware so whenever iam authorized i can get any info of user that logged in or just been authorized to enter ,and this is an example
-    async getMe(req, res) {
+// Get All
+const getAll = async (req, res) => {
+    const user = await User.find();
+    res.json({ message: "Admin data display", user });
+};
 
-        // const { _id, username, email } = await User.findById(req.user.id)
-        const user = await User.find()
-
-        res.status(200).json({
-            id: _id,
-            username,
-            email
-        })
-    }
-
-
-
-
-
-}
-const controller = new Controller()
-export default controller;
+export {
+    registerUser,
+    loginUser,
+    getMe,
+    getAll,
+    deleteUser,
+    logoutUser
+};
