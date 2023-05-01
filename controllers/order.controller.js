@@ -5,7 +5,7 @@ import Item from '../models/item.model.js'
 class Controller {
     async createOrder(req, res) {
         try {
-            const { firstName, lastName, email, phone, country, city, state, street, building, Q, size,  ItemId } = req.body;
+            const { firstName, lastName, email, phone, country, city, state, street, building, Q, size, ItemId } = req.body;
 
             // Validate required fields
             if (!firstName || !lastName || !email || !phone || !country || !city || !state || !street || !building || !Q || !size || !ItemId) {
