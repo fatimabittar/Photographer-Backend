@@ -1,5 +1,6 @@
 import Service from "../models/serviceModel.js";
 import fs from "fs";
+import asyncHandler from "express-async-handler"
 import path from "path";
 
 // GET /services - retrieve all services
@@ -37,7 +38,7 @@ const getServiceById = async (req, res) => {
 };
 
 // POST /services - create a new service
-const createService = async (req, res) => {
+const createService = asyncHandler(async (req, res) => {
   const service = new Service({
     title: req.body.title,
     price: req.body.price,
@@ -52,7 +53,7 @@ const createService = async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-};
+});
 
 // PUT /services/:id - update a specific service by ID
 const updateService = async (req, res) => {
@@ -62,11 +63,17 @@ const updateService = async (req, res) => {
       return res.status(404).json({ message: "Service not found" });
     }
 
-    service.title = req.body.title;
-    service.price = req.body.price;
-    service.description = req.body.description;
-    service.image_url = req.file.path;
-    service.status = req.body.status;
+
+    const imageFile = req.file?.path;
+
+    const { title, price, description, status } = req.body;
+
+    service.title = title;
+    service.price = price;
+    service.description = description;
+    service.status = status;
+    if(imageFile) service.image_url = imageFile;
+    console.log(req.file);
 
     const updatedService = await service.save();
     res.json(updatedService);
