@@ -12,6 +12,8 @@ const storage = multer.diskStorage({
 const uploadMiddlewares = multer({
   storage,
 });
+import { protect } from '../middlewares/authMiddleware.js'
+
 
 router.get("/", controller.getAll); //list all
 router.get("/:id", controller.get); // list one

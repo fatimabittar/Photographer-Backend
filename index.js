@@ -15,7 +15,7 @@ import aboutRoutes from "./routes/aboutRoute.js";
 import contactRoutes from "./routes/contactRouter.js";
 
 dotenv.config();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 5000;
 connectDB();
 const app = express();
 
@@ -24,6 +24,11 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+
+// Serve static files from the 'uploads' directory
+// app.use("/uploads", express.static("uploads"));
+
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({
@@ -49,8 +54,8 @@ app.use("/api/Orders", OrderRouter);
 //ItemOrder
 app.use("/api/ItemOrders", ItemOrderRouter);
 //User
-app.use("/api", UserRouter);
-
-// app.use(errorHandler);
+app.use('/api/users', UserRouter);
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
+
+
