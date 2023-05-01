@@ -13,17 +13,21 @@ import imageRoutes from "./routes/imageRoutes.js"
 import bodyParser from "body-parser";
 import aboutRoutes from './routes/aboutRoute.js'
 import contactRoutes from './routes/contactRouter.js';
+import galleryRoutes from "./routes/galleryRoute.js";
+import fileUpload from 'express-fileupload';
 
-dotenv.config();
-const port = process.env.PORT || 8000;
-connectDB();
 const app = express();
-
 const corsOptions = {
   origin: '*'
 };
 
 app.use(cors(corsOptions));
+dotenv.config();
+const port = process.env.PORT || 8000;
+connectDB();
+app.use(fileUpload({ useTempFiles:true
+}));
+
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({
@@ -42,7 +46,7 @@ app.use("/api/services", serviceRoutes);
 app.use("/api/images", imageRoutes);
 app.use("/api/about", aboutRoutes);
 app.use("/api/contact", contactRoutes);
-
+app.use("/api/gallery", galleryRoutes);
 //item
 app.use('/api/Items', ItemRouter);
 //order
