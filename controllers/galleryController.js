@@ -3,6 +3,7 @@ import cloudinary from "../utils/cloudinary.js";
 import axios from 'axios';
 
 export const createPhoto = async (req,res)=>{
+  console.log(req.body.category)
      const category = req.body.category;
      const file = req.files.file;
      try {
@@ -26,6 +27,7 @@ export const createPhoto = async (req,res)=>{
 }
 export const getAllPhotos = async (req, res) => {
     try {
+      console.log("hi am here")
       const photos = await Gallery.find().lean();
       const newPhotos = await Promise.all(
         photos.map(async (photo) => {
@@ -43,6 +45,21 @@ export const getAllPhotos = async (req, res) => {
       res.status(200).json(newPhotos);
     } catch (error) {
       res.status(400).json({ message: error.message });
+    }
+  };
+  
+  export const deletePhoto = async (req, res) => {
+    console.log("hiii",req.params.id)
+    const { id } = req.params
+    try {
+        const deletedPhoto = await Gallery.findByIdAndDelete(id);
+
+      if (!deletedPhoto) {
+        return res.status(404).json({ message: 'Photo not found' });
+      }
+      res.json({ message: 'Photo deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
   };
   
