@@ -80,44 +80,70 @@ class Controller {
         }
     }
 
-
+    //Get By Id
     async getItemById(req, res) {
-        const { id } = req.params
+        const { id } = req.params;
         try {
-            const ItemById = await Item.findById(id);
-            if (!ItemById) {
+            const item = await Item.findById(id);
+            if (!item) {
                 return res.status(404).json({
                     status: 404,
                     success: false,
-                    message: `Item with id=${id} doesn't exist`
-                })
+                    message: `Item with id=${id} doesn't exist`,
+                });
             }
             return res.status(200).json({
                 status: 200,
                 success: true,
-                data: ItemById
-            })
-        }
-        catch (error) {
+                data: {
+                    _id: item._id,
+                    title: item.title,
+                    description: item.description,
+                    price: item.price,
+                    stock: item.stock,
+                    size: item.size,
+                    category: item.category,
+                    image_url: `${req.protocol}://${req.get('host')}/${item.image_url}`,
+                },
+            });
+        } catch (error) {
             return res.status(500).json({
                 status: 500,
                 success: false,
-                message: error.message
-            })
+                message: error.message,
+            });
         }
     }
 
     async updateItem(req, res) {
-        const { id } = req.params
+        const { id } = req.params;
         try {
+            const item = await Item.findById(id);
+            if (!item) {
+                return res.status(404).json({ message: 'Item not found' });
+            }
+
+            let imageUrl = item.image_url;
+            if (req.file) {
+                imageUrl = req.file.path;
+            }
+
             const updatedItem = await Item.findByIdAndUpdate(
                 id,
-                req.body,
+                {
+                    title: req.body.title || item.title,
+                    description: req.body.description || item.description,
+                    size: req.body.size || item.size,
+                    price: req.body.price || item.price,
+                    stock: req.body.stock || item.stock,
+                    category: req.body.category || item.category,
+                    image_url: imageUrl
+                },
                 { new: true }
             );
+
             return res.status(200).json({ message: "successfully updated", updatedItem });
-        }
-        catch (error) {
+        } catch (error) {
             return res.status(400).json({ message: error.message });
         }
     }
@@ -147,10 +173,22 @@ class Controller {
     async getItems(req, res) {
         try {
             const allItems = await Item.find();
+            const itemsWithImageData = allItems.map(item => {
+                return {
+                    _id: item._id,
+                    title: item.title,
+                    description: item.description,
+                    size: item.size,
+                    price: item.price,
+                    stock: item.stock,
+                    category: item.category,
+                    image_url: `${req.protocol}://${req.get('host')}/${item.image_url}`
+                }
+            });
             return res.status(200).json({
                 status: 200,
                 success: true,
-                data: allItems
+                data: itemsWithImageData
             })
         } catch (error) {
             return res.status(500).json({
@@ -159,7 +197,10 @@ class Controller {
                 message: error.message
             })
         }
-    }
+    };
+
+
+
 
 }
 const controller = new Controller()
