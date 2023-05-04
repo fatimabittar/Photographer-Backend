@@ -1,14 +1,17 @@
 import Service from "../models/serviceModel.js";
 import fs from "fs";
-import asyncHandler from "express-async-handler"
+import asyncHandler from "express-async-handler";
 import path from "path";
 
 // GET /services - retrieve all services
 const getServices = async (req, res) => {
   try {
     const services = (await Service.find()).map((item) => {
-      const file = fs.readFileSync(item.image_url);
-      const image = Buffer.from(file).toString("base64");
+      let image;
+      if (item.image_url) {
+        const file = fs.readFileSync(item.image_url);
+        image = Buffer.from(file).toString("base64");
+      }
       return {
         title: item.title,
         price: item.price,
@@ -43,7 +46,7 @@ const createService = asyncHandler(async (req, res) => {
     title: req.body.title,
     price: req.body.price,
     description: req.body.description,
-    image_url: req.file.path,
+    image_url: req.file?.path,
     status: req.body.status,
   });
 
@@ -63,7 +66,6 @@ const updateService = async (req, res) => {
       return res.status(404).json({ message: "Service not found" });
     }
 
-
     const imageFile = req.file?.path;
 
     const { title, price, description, status } = req.body;
@@ -72,7 +74,7 @@ const updateService = async (req, res) => {
     service.price = price;
     service.description = description;
     service.status = status;
-    if(imageFile) service.image_url = imageFile;
+    if (imageFile) service.image_url = imageFile;
     console.log(req.file);
 
     const updatedService = await service.save();

@@ -21,6 +21,7 @@ const getImages = async (req, res) => {
       const image = Buffer.from(file).toString("base64");
       return {
         image,
+        id:item.id,
         section: item.section,
         page: item.page,
         width: item.width,
