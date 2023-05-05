@@ -21,7 +21,7 @@ const getImages = async (req, res) => {
       const image = Buffer.from(file).toString("base64");
       return {
         image,
-        id:item.id,
+        id: item.id,
         section: item.section,
         page: item.page,
         width: item.width,
@@ -36,7 +36,6 @@ const getImages = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 // Create image
 const createImage = async (req, res) => {
@@ -70,17 +69,16 @@ const updateImage = async (req, res) => {
     const imageFile = req.file?.path;
 
     const { section, page, width, height, priority } = req.body;
-
-    // const file = fs.readFileSync(req.body.image_url);
-    // const image = Buffer.from(file).toString("base64");
+    console.log(img);
 
     if (imageFile) img.image_url = imageFile;
-    if (section) img.section = section;
-    if (page) img.page = page;
-    if (width) img.height = width;
-    if (height) img.width = height;
-    if (priority) img.priority = priority;
+    img.section = section;
+    img.page = page;
+    img.height = width;
+    img.width = height;
+    img.priority = priority;
 
+    console.log("hooo",req.file);
     const updatedImage = await img.save();
 
     res.json(updatedImage);

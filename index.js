@@ -27,8 +27,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 dotenv.config();
 
-app.use(fileUpload({ useTempFiles:true
-}));
+// app.use(fileUpload({ useTempFiles:true
+// }));
 
 
 // parse application/x-www-form-urlencoded

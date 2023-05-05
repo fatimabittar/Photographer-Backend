@@ -5,9 +5,9 @@ import axios from 'axios';
 export const createPhoto = async (req,res)=>{
   console.log(req.body.category)
      const category = req.body.category;
-     const file = req.files.file;
+     const file = req.file.path;
      try {
-        const result = await cloudinary.uploader.upload(file.tempFilePath,{
+        const result = await cloudinary.uploader.upload(file,{
          public_id: `${Date.now()}`,
          resource_type:"auto",
           folder:"Gallery",

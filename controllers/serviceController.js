@@ -42,6 +42,7 @@ const getServiceById = async (req, res) => {
 
 // POST /services - create a new service
 const createService = asyncHandler(async (req, res) => {
+
   const service = new Service({
     title: req.body.title,
     price: req.body.price,

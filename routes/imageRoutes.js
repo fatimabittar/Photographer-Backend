@@ -1,6 +1,12 @@
+const router = express.Router();
 import express from "express";
 import multer from "multer";
-import {getImages, createImage, updateImage, deleteImage} from "../controllers/imageController.js"
+import {
+  getImages,
+  createImage,
+  updateImage,
+  deleteImage,
+} from "../controllers/imageController.js";
 
 const storage = multer.diskStorage({
   destination: "uploads",
@@ -12,8 +18,6 @@ const storage = multer.diskStorage({
 const uploadMiddlewares = multer({
   storage,
 });
-
-const router = express.Router();
 
 router
   .route("/")
