@@ -27,6 +27,14 @@ const imageSchema = new Schema(
       type: Number,
       default: 1,
     },
+    x: {
+      type: Number,
+      default: 0,
+    },
+    y: {
+      type: Number,
+      default: 0,
+    }
   },
   { timestamps: true }
 );

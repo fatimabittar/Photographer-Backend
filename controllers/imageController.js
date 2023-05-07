@@ -27,6 +27,8 @@ const getImages = async (req, res) => {
         width: item.width,
         height: item.height,
         priority: item.priority,
+        x: item.x,
+        y: item.y,
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
       };
@@ -42,7 +44,7 @@ const createImage = async (req, res) => {
   try {
     const imageFile = req.file?.path;
 
-    const { section, page, width, height, priority } = req.body;
+    const { section, page, width, height, priority, x, y } = req.body;
 
     // Save image URL to database
     const newImage = new image({
@@ -52,6 +54,8 @@ const createImage = async (req, res) => {
       page,
       section,
       priority,
+      x,
+      y,
     });
     const savedImage = await newImage.save();
 
@@ -68,17 +72,17 @@ const updateImage = async (req, res) => {
 
     const imageFile = req.file?.path;
 
-    const { section, page, width, height, priority } = req.body;
-    console.log(img);
+    const { section, page, width, height, priority, x, y } = req.body;
 
     if (imageFile) img.image_url = imageFile;
-    img.section = section;
-    img.page = page;
-    img.height = width;
-    img.width = height;
-    img.priority = priority;
+    if (section) img.section = section;
+    if (page) img.page = page;
+    if (height) img.height = height;
+    if (width) img.width = width;
+    if (priority) img.priority = priority;
+    if (x) img.x = x;
+    if (y) img.y = y;
 
-    console.log("hooo",req.file);
     const updatedImage = await img.save();
 
     res.json(updatedImage);

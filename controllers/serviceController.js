@@ -66,18 +66,15 @@ const updateService = async (req, res) => {
     if (!service) {
       return res.status(404).json({ message: "Service not found" });
     }
-console.log(service);
     const imageFile = req.file?.path;
 
     const { title, price, description, status } = req.body;
 
     service.title = title;
-    console.log("hmm: ",service);
     service.price = price;
     service.description = description;
     service.status = status;
     if (imageFile) service.image_url = imageFile;
-    console.log(req.file);
 
     const updatedService = await service.save();
     res.json(updatedService);
